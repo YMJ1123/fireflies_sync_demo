@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mirollo-Strogatz 同步化理論演示</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="app-header">
+            <h1>Mirollo-Strogatz 同步化理論</h1>
+            <p>脈衝耦合振盪器自發達到同步狀態的互動演示</p>
+        </header>
+
+        <div class="main-content">
+            <div class="simulation-section">
+                <div class="simulation-container">
+                    <div class="canvas-container">
+                        <canvas id="simulationCanvas"></canvas>
+                    </div>
+                    <div class="sync-progress">
+                        <label>同步化程度：</label>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="syncProgress"></div>
+                        </div>
+                        <span id="syncPercentage">0%</span>
+                    </div>
+                </div>
+
+                <div class="control-panel card">
+                    <h3>控制面板</h3>
+                    <div class="controls-grid">
+                        <div class="form-group">
+                            <label class="form-label">振盪器數量: <span id="oscillatorCountValue">5</span></label>
+                            <input type="range" id="oscillatorCount" min="3" max="10" value="5" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">耦合強度: <span id="couplingStrengthValue">0.3</span></label>
+                            <input type="range" id="couplingStrength" min="0.1" max="1.0" step="0.1" value="0.3" class="form-control">
+                        </div>
+                        <div class="button-group">
+                            <button id="randomizeBtn" class="btn btn--secondary">初始隨機化</button>
+                            <button id="playPauseBtn" class="btn btn--primary">開始模擬</button>
+                            <button id="resetBtn" class="btn btn--outline">重置</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-panel card">
+                    <h3>實時統計</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">同步化程度</span>
+                            <span class="stat-value" id="syncValue">0.0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">放電事件</span>
+                            <span class="stat-value" id="fireCount">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">時間步數</span>
+                            <span class="stat-value" id="timeSteps">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kuramoto 模擬（互動式） -->
+                <div class="card" style="margin-top: 16px;">
+                    <div class="card__header">
+                        <h3>Kuramoto 模擬（螢火蟲隨機散佈）</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="canvas-container">
+                            <canvas id="kuramotoCanvas"></canvas>
+                        </div>
+                        <div class="sync-progress" style="margin-bottom: 12px;">
+                            <label>R(t) 同步指標：</label>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="kuramotoSyncProgress"></div>
+                            </div>
+                            <span id="kuramotoSyncPercentage">0%</span>
+                        </div>
+                        <div class="controls-grid">
+                            <div class="form-group">
+                                <label class="form-label">螢火蟲數量: <span id="kNValue">100</span></label>
+                                <input type="range" id="kN" min="20" max="300" step="10" value="100" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">耦合強度 K: <span id="kCouplingValue">2.2</span></label>
+                                <input type="range" id="kCoupling" min="0" max="5" step="0.1" value="2.2" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">自然頻率均值 ω0: <span id="kOmega0Value">1.00</span></label>
+                                <input type="range" id="kOmega0" min="0.20" max="2.00" step="0.05" value="1.00" class="form-control" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">時間步長 dt: <span id="kDtValue">0.03</span></label>
+                                <input type="range" id="kDt" min="0.005" max="0.2" step="0.005" value="0.03" class="form-control" />
+                            </div>
+                            <div class="button-group">
+                                <button id="kRandomizeBtn" class="btn btn--secondary">隨機化</button>
+                                <button id="kPlayPauseBtn" class="btn btn--primary">開始模擬</button>
+                                <button id="kResetBtn" class="btn btn--outline">重置</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="theory-section">
+                <div class="theory-panel card">
+                    <h2>理論解釋</h2>
+                    
+                    <div class="theory-content">
+                        <div class="theory-intro">
+                            <img src="https://ppl-ai-code-interpreter-files.s3.amazonaws.com/web/direct-files/dd323bc75f3d7119809dfcf75f6843b4/fd4c6b62-348f-45bf-82e8-02b081383510/39269d00.png" alt="Mirollo-Strogatz同步化過程圖" class="theory-image">
+                            <p><strong>Mirollo-Strogatz 理論</strong>研究脈衝耦合振盪器如何自發達到同步狀態。此理論廣泛應用於解釋螢火蟲同步發光、心臟起搏細胞同步等自然現象。</p>
+                        </div>
+
+                        <div class="theory-section-block">
+                            <h4>數學模型</h4>
+                            <p>每個振盪器的狀態由以下模型描述：</p>
+                            <div class="math-formula">
+                                <code>x = f(φ) = 1 - exp(-αφ)</code>
+                            </div>
+                            <p>其中 φ = t mod T，且滿足條件：f'(φ) > 0 且 f''(φ) < 0（凹函數特性）</p>
+                        </div>
+
+                        <div class="theory-section-block">
+                            <h4>脈衝耦合機制</h4>
+                            <p>當某個振盪器達到閾值並放電時：</p>
+                            <ul>
+                                <li>該振盪器重置為 0</li>
+                                <li>所有其他振盪器的狀態增加 ε·x(t)，其中 ε 為耦合強度</li>
+                                <li>此機制促使振盪器逐漸同步</li>
+                            </ul>
+                        </div>
+
+                        <div class="theory-section-block">
+                            <h4>同步化條件</h4>
+                            <p>在 Mirollo-Strogatz 理論中，<strong>幾乎所有初始條件</strong>都會導致完全同步，這是由於：</p>
+                            <ul>
+                                <li>凹函數的增長特性</li>
+                                <li>脈衝耦合的吸收效應</li>
+                                <li>狀態空間的收斂性質</li>
+                            </ul>
+                        </div>
+
+                        <div class="theory-section-block">
+                            <h4>應用實例</h4>
+                            <div class="applications-grid">
+                                <div class="app-item">
+                                    <strong>螢火蟲同步發光</strong><br>
+                                    成千上萬的螢火蟲同時閃爍
+                                </div>
+                                <div class="app-item">
+                                    <strong>心臟起搏細胞</strong><br>
+                                    維持心臟規律跳動
+                                </div>
+                                <div class="app-item">
+                                    <strong>神經網絡</strong><br>
+                                    大腦神經元同步活動
+                                </div>
+                                <div class="app-item">
+                                    <strong>生物鐘調節</strong><br>
+                                    晝夜節律的協調機制
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
